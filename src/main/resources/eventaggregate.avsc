@@ -1,0 +1,109 @@
+[
+  {
+    "namespace": "io.confluent.examples.streams.avro.microservices",
+    "type": "record",
+    "name": "EventAggregate",
+    "fields": [
+      {
+        "name": "id",
+        "type": "long"
+      },
+      {
+        "name": "eventList",
+        "type": {
+          "type": "array",
+          "items": {
+            "name": "Event",
+            "type": "record",
+            "fields": [
+              {
+                "name": "id",
+                "type": "long"
+              },
+              {
+                "name": "action",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "firstAggregateList",
+        "type": {
+          "type": "array",
+          "items": {
+            "name": "FirstAggregate",
+            "type": "record",
+            "fields": [
+              {
+                "name": "id",
+                "type": "long"
+              },
+              {
+                "name": "action",
+                "type": "string"
+              },
+              {
+                "name": "someList",
+                "type": {
+                  "type": "array",
+                  "items": {
+                    "name": "SomeInformation",
+                    "type": "record",
+                    "fields": [
+                      {
+                        "name": "information",
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "secondAggregateList",
+        "type": {
+          "type": "array",
+          "items": {
+            "name": "SecondAggregate",
+            "type": "record",
+            "fields": [
+              {
+                "name": "id",
+                "type": "long"
+              },
+              {
+                "name": "action",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "thirdAggregateList",
+        "type": {
+          "type": "array",
+          "items": {
+            "name": "ThirdAggregate",
+            "type": "record",
+            "fields": [
+              {
+                "name": "id",
+                "type": "long"
+              },
+              {
+                "name": "action",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+]
