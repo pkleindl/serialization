@@ -40,7 +40,6 @@
         <docker.skip-test>false</docker.skip-test>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <scalatest.version>3.1.2</scalatest.version>
         <!-- The default is ubi8 -->
         <docker.os_type>ubi8</docker.os_type>
         <!-- Need to explicitly set this otherwise it will be overridden from common-docker pom. -->
@@ -93,11 +92,6 @@
             <version>${kafka.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams-scala_${kafka.scala.version}</artifactId>
-            <version>${kafka.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.avro</groupId>
             <artifactId>avro</artifactId>
             <version>${avro.version}</version>
@@ -112,12 +106,7 @@
             <artifactId>commons-cli</artifactId>
             <version>1.4</version>
         </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <!-- This version must be compatible with the Scala version of the Kafka dependency. -->
-            <version>${scala.version}</version>
-        </dependency>
+
         <dependency>
             <!-- This could be a test-only dependency, but we keep it a compile dependency so that
                  users are able to package the examples via `mvn package` and actually run the examples
@@ -187,29 +176,19 @@
             <version>${io.confluent.blueway.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>algebird-core_${kafka.scala.version}</artifactId>
-            <version>${algebird.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>chill_${kafka.scala.version}</artifactId>
-            <version>${chill.version}</version>
-        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.11.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.2.2</version>
+            <type>maven-plugin</type>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
@@ -281,128 +260,12 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- The following dependencies on ScalaTest are only required for the Scala tests
-             under src/test/scala/.  They are not required for Java code/tests.
-        -->
-        <dependency>
-            <!-- This is a compile-time dependency but included only for scalatest below,
-                 so still list it under test dependencies. -->
-            <groupId>org.scalactic</groupId>
-            <artifactId>scalactic_${kafka.scala.version}</artifactId>
-            <version>${scalatest.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_${kafka.scala.version}</artifactId>
-            <version>${scalatest.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatestplus</groupId>
-            <artifactId>junit-4-12_2.13</artifactId>
-            <version>3.1.2.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.scalatestplus</groupId>
-            <artifactId>scalatestplus-mockito_2.13</artifactId>
-            <version>1.0.0-M2</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
 
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>net.alchim31.maven</groupId>
-                    <artifactId>scala-maven-plugin</artifactId>
-                    <version>3.2.1</version>
-                    <configuration>
-                        <scalaCompatVersion>${kafka.scala.version}</scalaCompatVersion>
-                        <scalaVersion>${scala.version}</scalaVersion>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
 
-            <!--
-                Add Scala sources and tests to project.
-                See http://www.mojohaus.org/build-helper-maven-plugin/usage.html
-            -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.10</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/main/scala</source>
-                                <source>${project.build.directory}/generated-sources</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>add-test-source</id>
-                        <phase>generate-test-sources</phase>
-                        <goals>
-                            <goal>add-test-source</goal>
-                        </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/test/scala</source>
-                                <source>${project.build.directory}/generated-sources</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- See http://davidb.github.io/scala-maven-plugin/usage.html -->
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>3.2.1</version>
-                <configuration>
-                    <args>
-                        <!--
-                           In combination with Scala 2.11, `-Xexperimental` enables SAM
-                           for Java 8 lambda support.  Make sure `kafka.scala.version`
-                           is set to `2.11`, not `2.10`.
-                        -->
-                        <arg>-Xexperimental</arg>
-                        <!-- Emit warning and location for usages of features that should be imported explicitly. -->
-                        <arg>-feature</arg>
-                        <!-- Emit warning and location for usages of deprecated APIs. -->
-                        <arg>-deprecation</arg>
-                        <!-- Enable additional warnings where generated code depends on assumptions. -->
-                        <arg>-unchecked</arg>
-                        <!-- Enable recommended additional warnings. -->
-                        <arg>-Xlint</arg>
-                        <!-- Warn if an argument list is modified to match the receiver. -->
-                        <arg>-Ywarn-dead-code</arg>
-                        <!-- Fail on compiler warnings -->
-                        <!--TODO: enable this once we have warnings under control<arg>-Xfatal-warnings</arg>-->
-                    </args>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -441,34 +304,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.21.0</version>
-                <configuration>
-                    <forkCount>1</forkCount>
-                    <reuseForks>false</reuseForks>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <!--
-                   See https://wiki.jasig.org/display/LIC/maven-notice-plugin
-                   In a nutshell: `mvn notice:check` and `mvn notice:generate`
-                -->
-                <groupId>org.jasig.maven</groupId>
-                <artifactId>maven-notice-plugin</artifactId>
-                <version>1.0.6.1</version>
-                <configuration>
-                    <licenseMapping>
-                        <param>../license-mappings.xml</param>
-                    </licenseMapping>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
+                <version>2.22.0</version>
             </plugin>
 
             <plugin>
@@ -500,40 +336,10 @@
                     </execution>
                 </executions>
             </plugin>
+
+
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>docker</id>
-            <activation>
-                <property>
-                    <name>env.BUILD_NUMBER</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.spotify</groupId>
-                        <artifactId>dockerfile-maven-plugin</artifactId>
-                        <version>${dockerfile-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>package</id>
-                                <goals>
-                                    <goal>build</goal>
-                                </goals>
-                                <configuration combine.self="append">
-                                    <skip>${docker.skip-build}</skip>
-                                    <buildArgs>
-                                        <STREAMS_VERSION>${project.version}</STREAMS_VERSION>
-                                    </buildArgs>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+
 </project>
