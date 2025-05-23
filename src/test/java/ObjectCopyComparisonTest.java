@@ -77,13 +77,13 @@ class ObjectCopyComparisonTest {
 
         start = System.currentTimeMillis();
         for (long i = 1; i <= 1000000; i++) {
-            EventAggregate eventAggregate = SpecificData.get().deepCopy(EventAggregate.getClassSchema(), eve);
+            SpecificData.get().deepCopy(EventAggregate.getClassSchema(), eve);
         }
         System.out.println("SpecificData.get().deepCopy:" + (System.currentTimeMillis() - start));
 
         start = System.currentTimeMillis();
         for (long i = 1; i <= 1000000; i++) {
-            EventAggregate eventAggregate = EventAggregate.newBuilder(eve).build();
+            EventAggregate.newBuilder(eve).build();
         }
         System.out.println("EventAggregate.newBuilder:" + (System.currentTimeMillis() - start));
 
@@ -99,23 +99,10 @@ class ObjectCopyComparisonTest {
         JSON.mixIn(SomeInformation.class, IgnoreSchemaProperty.class);
         JSON.mixIn(SecondAggregate.class, IgnoreSchemaProperty.class);
         JSON.mixIn(ThirdAggregate.class, IgnoreSchemaProperty.class);
-        String json = JSON.toJSONString(eve);
-        byte[] jsonBytes2 = JSON.toJSONBytes(eve);
-
-        /*
-        start = System.currentTimeMillis();
-        TokenBuffer tb = new TokenBuffer(new ObjectMapper(), false);
-        for (long i = 1; i <= 1000000; i++) {
-            objectMapper.writeValue(tb, eve);
-            EventAggregate eventAggregate = objectMapper.readValue(tb.asParser(), EventAggregate.class);
-        }
-        System.out.println("objectMapper.readValue(tb.asParser():" + (System.currentTimeMillis() - start));
-
-         */
 
         start = System.currentTimeMillis();
         for (long i = 1; i <= 1000000; i++) {
-            EventAggregate eventAggregate = objectMapper.convertValue(eve, EventAggregate.class);
+            objectMapper.convertValue(eve, EventAggregate.class);
         }
         System.out.println("objectMapper.convertValue:" + (System.currentTimeMillis() - start));
 
@@ -123,47 +110,15 @@ class ObjectCopyComparisonTest {
         kryo.setRegistrationRequired(false);
         start = System.currentTimeMillis();
         for (long i = 1; i <= 1000000; i++) {
-            EventAggregate eventAggregate = kryo.copy(eve);
+            kryo.copy(eve);
         }
         System.out.println("kryo.copy:" + (System.currentTimeMillis() - start));
 
         start = System.currentTimeMillis();
         for (long i = 1; i <= 1000000; i++) {
-            EventAggregate eventAggregate = JSON.copy(eve);
+            JSON.copy(eve);
         }
         System.out.println("JSON.copy:" + (System.currentTimeMillis() - start));
-
-        /*
-        System.out.println(eve);
-        System.out.println(SpecificData.get().deepCopy(EventAggregate.getClassSchema(), eve).toString());
-        System.out.println(kryo.copy(eve).toString());
-        System.out.println(objectMapper.convertValue(eve, EventAggregate.class));
-
-        System.out.println(eve.equals(SpecificData.get().deepCopy(EventAggregate.getClassSchema(), eve)) );
-        System.out.println(eve.equals(kryo.copy(eve)) );
-        System.out.println(SpecificData.get().deepCopy(EventAggregate.getClassSchema(), eve).equals(kryo.copy(eve)) );
-        System.out.println(eve.equals(objectMapper.convertValue(eve, EventAggregate.class)) );
-
-         */
-
-        /* For reference, it's slow
-        start = System.currentTimeMillis();
-        for (long i = 1; i <= 1000000; i++) {
-            EventAggregate eventAggregate = SerializationUtils.clone(eve);
-        }
-        System.out.println("SerializationUtils.clone:" + (System.currentTimeMillis() - start));
-        */
-        /*
-        start = System.currentTimeMillis();
-        for (long i = 1; i <= 1000000; i++) {
-            SpecificData specificData = SpecificData.get();
-            specificData.setCustomCoders(true);
-            specificData.setFastReaderEnabled(true);
-            EventAggregate eventAggregate = specificData.deepCopy(EventAggregate.getClassSchema(), eve);
-        }
-        System.out.println("tbd:" + (System.currentTimeMillis() - start));
-
-         */
 
     }
 

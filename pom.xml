@@ -33,18 +33,9 @@
          https://github.com/confluentinc/common (see common's pom.xml for kafka.version).
     -->
     <properties>
-        <algebird.version>0.13.7</algebird.version>
-        <avro.version>1.10.1</avro.version>
-        <chill.version>0.9.5</chill.version>
-        <docker.skip-build>false</docker.skip-build>
-        <docker.skip-test>false</docker.skip-test>
+        <avro.version>1.12.0</avro.version>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- The default is ubi8 -->
-        <docker.os_type>ubi8</docker.os_type>
-        <!-- Need to explicitly set this otherwise it will be overridden from common-docker pom. -->
-        <docker.file>Dockerfile.${docker.os_type}</docker.file>
-        <docker.tag>${project.version}-${docker.os_type}</docker.tag>
         <io.confluent.schema-registry.version>${confluent.version.range}</io.confluent.schema-registry.version>
         <io.confluent.blueway.version>${confluent.version.range}</io.confluent.blueway.version>
         <io.confluent.kafka-streams-examples.version>7.9.0-0</io.confluent.kafka-streams-examples.version>
@@ -83,11 +74,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams</artifactId>
-            <version>${kafka.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-tools</artifactId>
             <version>${kafka.version}</version>
         </dependency>
@@ -108,14 +94,6 @@
         </dependency>
 
         <dependency>
-            <!-- This could be a test-only dependency, but we keep it a compile dependency so that
-                 users are able to package the examples via `mvn package` and actually run the examples
-                 against a Kafka cluster. -->
-            <groupId>com.101tec</groupId>
-            <artifactId>zkclient</artifactId>
-            <version>0.9</version>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-reload4j</artifactId>
         </dependency>
@@ -123,36 +101,6 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>logredactor</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-servlet</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.inject</groupId>
-            <artifactId>jersey-hk2</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
-            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -164,18 +112,6 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-        <!--
-            This dependency is included to demonstrate the use of
-            Confluent Monitoring Interceptors in conjunction with
-            Kafka Streams but isn't a required
-            dependency for running Kafka Streams.
-        -->
-        <dependency>
-            <groupId>io.confluent</groupId>
-            <artifactId>monitoring-interceptors</artifactId>
-            <version>${io.confluent.blueway.version}</version>
-        </dependency>
-
 
         <!-- Test dependencies -->
         <dependency>
@@ -203,41 +139,9 @@
         </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_${kafka.scala.version}</artifactId>
-            <version>${kafka.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka_${kafka.scala.version}</artifactId>
-            <version>${kafka.version}</version>
-            <classifier>test</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams-test-utils</artifactId>
-            <version>${kafka.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>${kafka.version}</version>
             <classifier>test</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams</artifactId>
-            <version>${kafka.version}</version>
-            <classifier>test</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.curator</groupId>
-            <artifactId>curator-test</artifactId>
-            <version>2.9.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -252,11 +156,6 @@
             <version>${io.confluent.schema-registry.version}</version>
             <!-- Required for e.g. schema registry's RestApp -->
             <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.xerial.snappy</groupId>
-            <artifactId>snappy-java</artifactId>
             <scope>test</scope>
         </dependency>
 
